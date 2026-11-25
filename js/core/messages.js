@@ -37,6 +37,15 @@ export function whatsappUrl(phone, message) {
   return `https://wa.me/${normalizePhone(phone)}?text=${encodeURIComponent(message)}`;
 }
 
+/**
+ * sms: URL that opens the phone's messaging app with the number and text filled in.
+ * iOS expects "sms:<number>&body=…"; Android and others expect "sms:<number>?body=…".
+ */
+export function smsUrl(phone, message, { ios = false } = {}) {
+  const separator = ios ? '&' : '?';
+  return `sms:+${normalizePhone(phone)}${separator}body=${encodeURIComponent(message)}`;
+}
+
 /** mailto: with encoded subject and body; line breaks as CRLF, as RFC 6068 requires. */
 export function mailtoUrl(email, subject, body) {
   const recipient = String(email).trim().split('@').map(encodeURIComponent).join('@');

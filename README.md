@@ -1,7 +1,7 @@
 # 🎁 WhoDidIGET
 
 Organizador de amigo secreto. O organizador introduz os participantes, faz o sorteio e envia
-a cada pessoa, por WhatsApp ou email, um link privado. Ninguém — nem o organizador — vê os pares:
+a cada pessoa, por WhatsApp, SMS ou email, um link privado. Ninguém — nem o organizador — vê os pares:
 só quem abre o seu link descobre a quem vai oferecer.
 
 HTML, CSS e JavaScript puros (módulos ES), sem frameworks nem dependências.
@@ -52,13 +52,13 @@ js/
     link.js             JSON → UTF-8 → XOR → base64url, and back
     validation.js       Unique names, contacts, exclusions
     contacts.js         Phone normalization (351) and emails
-    messages.js         Message text, wa.me and mailto: URLs
+    messages.js         Message text, wa.me, sms: and mailto: URLs
     dates.js            pt-PT date formatting
     state.js            State shape and sanitizing of stored data
   ui/                   Screens (DOM)
     organizer.js        Wires screens 1 and 2 and the actions that switch screens
     setup.js            Screen 1 — draw details, participants, exclusions
-    send.js             Screen 2 — WhatsApp, email, copy link, "sent" flag
+    send.js             Screen 2 — WhatsApp, SMS, email, copy link, "sent" flag
     reveal.js           Screen 3 — gift, name, confetti
     confetti.js
     dom.js              Helpers ($, el, toast, copyText…)

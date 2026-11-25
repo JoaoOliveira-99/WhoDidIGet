@@ -55,6 +55,12 @@ export function prefersReducedMotion() {
   return window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
 }
 
+/** True on iPhone/iPad (iPadOS reports itself as a Mac with a touch screen). */
+export function isIOS() {
+  const { userAgent, platform, maxTouchPoints } = navigator;
+  return /iPad|iPhone|iPod/.test(userAgent) || (platform === 'MacIntel' && maxTouchPoints > 1);
+}
+
 /** Focuses an element without scrolling; useful after switching screens. */
 export function focusQuietly(element) {
   element?.focus({ preventScroll: true });

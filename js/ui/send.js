@@ -4,13 +4,14 @@
  * Shows only the participant list, never the pairs. Each message carries only
  * that person's private link (the secret friend's name is encoded inside it).
  *   WhatsApp: https://wa.me/<number>?text=<message>
+ *   SMS:      sms:+<number>?body=<message>  (iOS: &body=)
  *   Email:    mailto:<email>?subject=…&body=…
  */
 
 import { formatDate } from '../core/dates.js';
 import { baseUrl, buildLink, isLocalLocation } from '../core/link.js';
-import { buildMessage, contactSummary, drawName, emailSubject, mailtoUrl, whatsappUrl } from '../core/messages.js';
-import { $, copyText, el, toast } from './dom.js';
+import { buildMessage, contactSummary, drawName, emailSubject, mailtoUrl, smsUrl, whatsappUrl } from '../core/messages.js';
+import { $, copyText, el, isIOS, toast } from './dom.js';
 
 /**
  * @param {ReturnType<import('../store.js').createStore>} store
@@ -43,6 +44,11 @@ export function createSendScreen(store, { onRedraw, onEdit }) {
 
   function sendWhatsApp(participant) {
     window.open(whatsappUrl(participant.phone, messageFor(participant)), '_blank', 'noopener');
+    markSent(participant.id, true);
+  }
+
+  function sendSms(participant) {
+    window.location.href = smsUrl(participant.phone, messageFor(participant), { ios: isIOS() });
     markSent(participant.id, true);
   }
 
@@ -100,6 +106,18 @@ export function createSendScreen(store, { onRedraw, onEdit }) {
             onclick: () => sendWhatsApp(p),
           },
           '💬 WhatsApp',
+        ),
+        el(
+          'button',
+          {
+            type: 'button',
+            id: `sms-${p.id}`,
+            class: 'btn btn-sm btn-sms',
+            disabled: !p.phone,
+            'aria-label': p.phone ? `Enviar por SMS a ${p.name}` : `SMS indisponível: ${p.name} não tem telemóvel`,
+            onclick: () => sendSms(p),
+          },
+          '📱 SMS',
         ),
         el(
           'button',

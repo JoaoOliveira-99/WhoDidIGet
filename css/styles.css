@@ -563,15 +563,16 @@ select:disabled {
   overflow-wrap: anywhere;
 }
 
+/* 2×2 on phones, one row of 4 on wider screens */
 .send-actions {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 8px;
 }
 
-@media (max-width: 340px) {
+@media (min-width: 560px) {
   .send-actions {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(4, 1fr);
   }
 }
 
@@ -582,6 +583,15 @@ select:disabled {
 
 .btn-whatsapp:hover:not(:disabled) {
   background: var(--whatsapp-dark);
+}
+
+.btn-sms {
+  color: #fff;
+  background: var(--green);
+}
+
+.btn-sms:hover:not(:disabled) {
+  background: var(--green-dark);
 }
 
 .btn-email {

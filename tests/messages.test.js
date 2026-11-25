@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
 import { formatDate } from '../js/core/dates.js';
-import { buildMessage, contactSummary, emailSubject, mailtoUrl, whatsappUrl } from '../js/core/messages.js';
+import { buildMessage, contactSummary, emailSubject, mailtoUrl, smsUrl, whatsappUrl } from '../js/core/messages.js';
 
 const draw = { name: 'Natal 2026', budget: '20€', date: '2026-12-24' };
 const message = buildMessage({ name: 'João', draw, link: 'https://x.pt/#TOKEN' });
@@ -26,6 +26,14 @@ describe('sharing URLs', () => {
     const url = whatsappUrl('912 345 678', message);
     assert.ok(url.startsWith('https://wa.me/351912345678?text='));
     assert.equal(decodeURIComponent(url.split('?text=')[1]), message);
+  });
+
+  it('builds the SMS URL with the right separator for each platform', () => {
+    const android = smsUrl('912 345 678', message);
+    const ios = smsUrl('912 345 678', message, { ios: true });
+    assert.ok(android.startsWith('sms:+351912345678?body='));
+    assert.ok(ios.startsWith('sms:+351912345678&body='));
+    assert.equal(decodeURIComponent(android.split('body=')[1]), message);
   });
 
   it('builds the mailto URL with encoded subject and CRLF body', () => {
