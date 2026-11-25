@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>WhoDidIGET · Amigo Secreto</title>
+  <meta name="description" content="Organiza o teu amigo secreto: sorteio justo e links privados por WhatsApp ou email.">
+  <meta name="theme-color" content="#8e1b1b">
+  <meta name="referrer" content="no-referrer">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/styles.css">
+  <script type="module" src="js/main.js"></script>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="brand"><span class="logo" aria-hidden="true">🎁</span>WhoDidI<strong>GET</strong></div>
+  <p class="tagline">Amigo secreto sem batota 🎄</p>
+</header>
+
+<main>
+  <noscript>
+    <div class="card alert-error">O WhoDidIGET precisa de JavaScript ligado para funcionar.</div>
+  </noscript>
+
+  <!-- Removed by js/main.js. If it stays visible the JS modules failed to load (e.g. opened via file://). -->
+  <div id="boot-warning" class="card alert-warning text-center">
+    A carregar… Se esta mensagem não desaparecer, abre a página através de um servidor
+    (ex.: <code>npm start</code>) ou aloja-a online — ver README.
+  </div>
+
+  <!-- ===================== SCREEN 1 — SETUP (organizer) ===================== -->
+  <section id="screen-setup" hidden aria-labelledby="setup-title">
+    <h1 id="setup-title" class="visually-hidden">Configurar o amigo secreto</h1>
+    <p class="intro">Organiza o teu amigo secreto em 3 passos. Nem tu vais saber quem tirou quem! 🤫</p>
+
+    <div class="card">
+      <h2><span class="step" aria-hidden="true">1</span> O sorteio</h2>
+      <div class="field">
+        <label for="draw-name">Nome do sorteio</label>
+        <input id="draw-name" maxlength="60" autocomplete="off" placeholder="Ex.: Natal 2026">
+      </div>
+      <div class="grid-2">
+        <div class="field">
+          <label for="draw-budget">Orçamento</label>
+          <input id="draw-budget" maxlength="30" autocomplete="off" placeholder="Ex.: 20€">
+        </div>
+        <div class="field">
+          <label for="draw-date">Data da troca</label>
+          <input id="draw-date" type="date">
+        </div>
+      </div>
+      <div class="field">
+        <label for="draw-message">Mensagem para os participantes <span class="optional">(opcional)</span></label>
+        <textarea id="draw-message" rows="3" maxlength="300" placeholder="Ex.: Jantar em casa da avó às 20h. Tragam o presente embrulhado!"></textarea>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><span class="step" aria-hidden="true">2</span> Participantes <span id="participant-count" class="count-badge">0</span></h2>
+      <p class="hint">Mínimo de 3 pessoas. Cada uma precisa de telemóvel ou email para receber o seu link.</p>
+
+      <form id="participant-form" novalidate>
+        <div class="field">
+          <label for="participant-name">Nome</label>
+          <input id="participant-name" maxlength="40" autocomplete="off" placeholder="Ex.: João">
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label for="participant-phone">Telemóvel</label>
+            <input id="participant-phone" type="tel" inputmode="tel" autocomplete="off" maxlength="25" placeholder="912 345 678">
+          </div>
+          <div class="field">
+            <label for="participant-email">Email</label>
+            <input id="participant-email" type="email" inputmode="email" autocomplete="off" maxlength="120" placeholder="nome@exemplo.pt">
+          </div>
+        </div>
+        <div id="participant-error" class="alert-error" role="alert" hidden></div>
+        <div class="form-actions">
+          <button type="submit" id="participant-submit" class="btn btn-secondary">➕ Adicionar participante</button>
+          <button type="button" id="participant-cancel" class="btn btn-link" hidden>Cancelar edição</button>
+        </div>
+      </form>
+
+      <ul id="participant-list" class="list" aria-label="Lista de participantes"></ul>
+      <p id="participant-empty" class="empty">Ainda não há participantes.</p>
+    </div>
+
+    <div class="card">
+      <h2><span class="step" aria-hidden="true">3</span> Exclusões <span class="optional">(opcional)</span></h2>
+      <p class="hint">Pares que não se podem tirar um ao outro (por exemplo, casais). Vale nos dois sentidos.</p>
+      <div class="grid-2">
+        <div class="field">
+          <label for="exclusion-a">Pessoa</label>
+          <select id="exclusion-a"></select>
+        </div>
+        <div class="field">
+          <label for="exclusion-b">Não pode calhar com</label>
+          <select id="exclusion-b"></select>
+        </div>
+      </div>
+      <div id="exclusion-error" class="alert-error" role="alert" hidden></div>
+      <button type="button" id="exclusion-add" class="btn btn-outline">🚫 Adicionar exclusão</button>
+      <ul id="exclusion-list" class="list" aria-label="Lista de exclusões"></ul>
+    </div>
+
+    <div class="card">
+      <div id="draw-error" class="alert-error" role="alert" hidden></div>
+      <button type="button" id="draw-button" class="btn btn-primary btn-lg">🎲 Fazer o sorteio</button>
+      <p class="hint text-center final-note">Os pares ficam secretos: nem tu os vais ver.</p>
+    </div>
+
+    <p class="text-center"><button type="button" class="btn btn-link" data-action="start-over">🗑️ Recomeçar</button></p>
+  </section>
+
+  <!-- ===================== SCREEN 2 — SEND LINKS (organizer) ===================== -->
+  <section id="screen-send" hidden aria-labelledby="send-title">
+    <div class="card card-highlight">
+      <h1 id="send-title" tabindex="-1">Sorteio feito! 🎉</h1>
+      <p id="send-summary" class="summary"></p>
+      <p class="no-margin">Envia a cada pessoa o seu <strong>link privado</strong>. Os pares não aparecem em lado nenhum: só quem abre o seu link descobre a quem vai oferecer. Por isso podes participar à vontade.</p>
+      <div id="local-warning" class="alert-warning" hidden>
+        ⚠️ Estás a usar a página localmente (no teu computador). Os links só funcionam para os outros quando a página estiver alojada online (por exemplo, GitHub Pages ou Netlify).
+      </div>
+      <p id="progress-text" class="progress-text"></p>
+      <div id="progress-bar" class="progress" role="progressbar" aria-label="Links enviados" aria-valuemin="0"><span></span></div>
+    </div>
+
+    <h2 class="visually-hidden">Participantes</h2>
+    <ul id="send-list" class="send-list"></ul>
+
+    <div class="card">
+      <h2>Precisas de mudar algo?</h2>
+      <div class="stack-actions">
+        <button type="button" id="redraw-button" class="btn btn-outline">🔄 Sortear de novo</button>
+        <button type="button" id="edit-button" class="btn btn-outline">✏️ Alterar participantes ou dados</button>
+        <button type="button" class="btn btn-link" data-action="start-over">🗑️ Recomeçar</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SCREEN 3 — REVEAL (participant) ===================== -->
+  <section id="screen-reveal" hidden>
+    <div id="reveal-card" class="card card-reveal" hidden>
+      <p id="reveal-draw-name" class="reveal-draw-name"></p>
+      <h1 id="reveal-greeting"></h1>
+      <p class="hint no-margin">Este link é só teu. Garante que ninguém está a espreitar! 👀</p>
+
+      <div id="gift" class="gift" aria-hidden="true">
+        <div class="gift-lid"><span class="gift-bow"></span></div>
+        <div class="gift-box"></div>
+      </div>
+
+      <button type="button" id="reveal-button" class="btn btn-primary btn-lg">🎁 Descobrir o meu amigo secreto</button>
+
+      <div id="reveal-result" class="reveal-result" hidden>
+        <p class="lead">Vais oferecer um presente a…</p>
+        <p id="reveal-name" class="friend-name" tabindex="-1"></p>
+        <p class="secret-note">🤫 Shhh! É segredo.</p>
+        <button type="button" id="hide-name-button" class="btn btn-link btn-sm" aria-pressed="false">🙈 Esconder nome</button>
+      </div>
+
+      <dl id="reveal-details" class="details"></dl>
+      <div id="reveal-message" class="organizer-message" hidden>
+        <p class="organizer-message-label">💌 Mensagem do organizador</p>
+        <p id="reveal-message-text" class="organizer-message-text"></p>
+      </div>
+    </div>
+
+    <div id="reveal-error" class="card card-reveal" hidden>
+      <div class="big-emoji" aria-hidden="true">🎁💨</div>
+      <h1>Ups! Este link não está completo</h1>
+      <p>Parece que o link se estragou pelo caminho — às vezes, ao copiar, fica a faltar um bocadinho do fim.</p>
+      <p><strong>Pede ao organizador para te enviar o link outra vez.</strong> 😊</p>
+    </div>
+  </section>
+</main>
+
+<footer id="site-footer" class="site-footer">WhoDidIGET · Os pares ficam guardados só nos links de cada pessoa.</footer>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+</body>
+</html>
