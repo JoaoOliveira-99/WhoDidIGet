@@ -1,0 +1,14 @@
+{
+  "name": "whodidiget",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Secret Santa organizer: fair draw and private links via WhatsApp or email.",
+  "type": "module",
+  "scripts": {
+    "start": "node scripts/server.js",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
